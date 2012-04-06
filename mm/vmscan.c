@@ -1949,20 +1949,10 @@ out:
 		scan = zone_nr_lru_pages(zone, sc, l);
 		if (priority || noswap) {
 			scan >>= priority;
+			if (!scan && force_scan)
+				scan = nr_force_scan[file];
 			scan = div64_u64(scan * fraction[file], denominator);
 		}
-
-		/*
-		 * If zone is small or memcg is small, nr[l] can be 0.
-		 * This results no-scan on this priority and priority drop down.
-		 * For global direct reclaim, it can visit next zone and tend
-		 * not to have problems. For global kswapd, it's for zone
-		 * balancing and it need to scan a small amounts. When using
-		 * memcg, priority drop can cause big latency. So, it's better
-		 * to scan small amount. See may_noscan above.
-		 */
-		if (!scan && force_scan)
-			scan = nr_force_scan[file];
 		nr[l] = scan;
 	}
 }
