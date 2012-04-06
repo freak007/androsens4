@@ -233,8 +233,8 @@ static struct clkctl_acpu_speed acpu_freq_tbl_oc[] = {
   { {1, 1}, 1728000,  ACPU_SCPLL, 0, 0, 1, 0x20, L2(22), 1275000, 0x03006000},
   { {1, 1}, 1782000,  ACPU_SCPLL, 0, 0, 1, 0x21, L2(22), 1300000, 0x03006000},
   { {1, 1}, 1836000,  ACPU_SCPLL, 0, 0, 1, 0x22, L2(22), 1325000, 0x03006000},
-  { {1, 1}, 1890000,  ACPU_SCPLL, 0, 0, 1, 0x23, L2(22), 1375000, 0x03006000},
-  { {1, 1}, 1944000,  ACPU_SCPLL, 0, 0, 1, 0x24, L2(22), 1350000, 0x03006000},
+  { {1, 1}, 1890000,  ACPU_SCPLL, 0, 0, 1, 0x23, L2(22), 1350000, 0x03006000},
+  { {1, 1}, 1944000,  ACPU_SCPLL, 0, 0, 1, 0x24, L2(22), 1375000, 0x03006000},
   { {0, 0}, 0 },
 };
 
@@ -856,14 +856,14 @@ uint32_t acpu_check_khz_value(unsigned long khz)
 {
 	struct clkctl_acpu_speed *f;
 
-	if (khz > 1944000)
+	if (khz > 1944)
 		return CONFIG_MSM_CPU_FREQ_MAX;
 
 	if (khz < 192)
 		return CONFIG_MSM_CPU_FREQ_MIN;
 
 	for (f = acpu_freq_tbl_oc; f->acpuclk_khz != 0; f++) {
-		if ((khz < 192000) && (f->acpuclk_khz == (khz*1000))) {
+		if ((khz < 192) && (f->acpuclk_khz == (khz*1000))) {
 			return f->acpuclk_khz;
 		}
 		if (f->acpuclk_khz == khz) {
@@ -951,7 +951,7 @@ static int __init acpuclk_8x60_init(struct acpuclk_soc_data *soc_data)
 
 	/* Improve boot time by ramping up CPUs immediately. */
 #ifdef CONFIG_CMDLINE_OPTIONS
-	if ((cmdline_maxkhz) && (cmdline_minkhz)) {
+	if ((cmdline_maxkhz) {
 		for_each_online_cpu(cpu)
 			acpuclk_8x60_set_rate(cpu, cmdline_maxkhz, SETRATE_INIT);
 	} else {
@@ -961,7 +961,7 @@ static int __init acpuclk_8x60_init(struct acpuclk_soc_data *soc_data)
 			acpuclk_8x60_set_rate(cpu, CONFIG_MSM_CPU_FREQ_MAX, SETRATE_INIT);
 #else
 		for_each_online_cpu(cpu)
-			acpuclk_8x60_set_rate(cpu, 1188000, SETRATE_INIT);
+			acpuclk_8x60_set_rate(cpu, 1566000, SETRATE_INIT);
 #endif
 #ifdef CONFIG_CMDLINE_OPTIONS
 	}
