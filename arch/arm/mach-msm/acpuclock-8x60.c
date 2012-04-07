@@ -951,7 +951,7 @@ static int __init acpuclk_8x60_init(struct acpuclk_soc_data *soc_data)
 
 	/* Improve boot time by ramping up CPUs immediately. */
 #ifdef CONFIG_CMDLINE_OPTIONS
-	if ((cmdline_maxkhz) {
+	if (cmdline_maxkhz) {
 		for_each_online_cpu(cpu)
 			acpuclk_8x60_set_rate(cpu, cmdline_maxkhz, SETRATE_INIT);
 	} else {
