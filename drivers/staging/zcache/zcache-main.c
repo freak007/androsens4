@@ -157,7 +157,9 @@ static unsigned long zcache_mean_compress_poor;
 
 /* forward references */
 static void *zcache_get_free_page(void);
+#ifdef CONFIG_CLEANCACHE
 static void zcache_free_page(void *p);
+#endif
 
 /*
  * zbud helper functions
@@ -447,6 +449,7 @@ static struct tmem_pool *zcache_get_pool_by_id(uint16_t cli_id,
 						uint16_t poolid);
 static void zcache_put_pool(struct tmem_pool *pool);
 
+#ifdef CONFIG_CLEANCACHE
 /*
  * Flush and free all zbuds in a zbpg, then free the pageframe
  */
@@ -579,6 +582,7 @@ static void zbud_init(void)
 		zbud_unbuddied[i].count = 0;
 	}
 }
+#endif
 
 #ifdef CONFIG_SYSFS
 /*
@@ -1071,10 +1075,12 @@ static void *zcache_get_free_page(void)
 	return page;
 }
 
+#ifdef CONFIG_CLEANCACHE
 static void zcache_free_page(void *p)
 {
 	free_page((unsigned long)p);
 }
+#endif
 
 /*
  * zcache implementation for tmem host ops
@@ -1493,6 +1499,7 @@ static struct attribute_group zcache_attr_group = {
  */
 static bool zcache_freeze;
 
+#ifdef CONFIG_CLEANCACHE
 /*
  * zcache shrinker interface (only useful for ephemeral pages, so zbud only)
  */
@@ -1522,6 +1529,7 @@ static struct shrinker zcache_shrinker = {
 	.shrink = shrink_zcache_memory,
 	.seeks = DEFAULT_SEEKS,
 };
+#endif
 
 /*
  * zcache shims between cleancache/frontswap ops and tmem
@@ -1622,6 +1630,7 @@ static int zcache_flush_object(int cli_id, int pool_id,
 	return ret;
 }
 
+#ifdef CONFIG_CLEANCACHE
 static int zcache_destroy_pool(int cli_id, int pool_id)
 {
 	struct tmem_pool *pool = NULL;
@@ -1654,6 +1663,7 @@ static int zcache_destroy_pool(int cli_id, int pool_id)
 out:
 	return ret;
 }
+#endif
 
 static int zcache_new_pool(uint16_t cli_id, uint32_t flags)
 {
