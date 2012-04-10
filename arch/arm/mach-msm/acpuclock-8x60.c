@@ -856,14 +856,14 @@ uint32_t acpu_check_khz_value(unsigned long khz)
 {
 	struct clkctl_acpu_speed *f;
 
-	if (khz > 1944)
+	if (khz > 1944000)
 		return CONFIG_MSM_CPU_FREQ_MAX;
 
 	if (khz < 192)
 		return CONFIG_MSM_CPU_FREQ_MIN;
 
 	for (f = acpu_freq_tbl_oc; f->acpuclk_khz != 0; f++) {
-		if ((khz < 192) && (f->acpuclk_khz == (khz*1000))) {
+		if ((khz < 192000) && (f->acpuclk_khz == (khz*1000))) {
 			return f->acpuclk_khz;
 		}
 		if (f->acpuclk_khz == khz) {
