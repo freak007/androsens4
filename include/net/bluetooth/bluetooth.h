@@ -1,6 +1,6 @@
 /*
    BlueZ - Bluetooth protocol stack for Linux
-   Copyright (c) 2000-2001, 2010-2011 Code Aurora Forum.  All rights reserved.
+   Copyright (c) 2000-2001, 2010-2012 Code Aurora Forum.  All rights reserved.
 
    Written 2000,2001 by Maxim Krasnyansky <maxk@qualcomm.com>
 
@@ -65,6 +65,7 @@ struct bt_security {
 #define BT_SECURITY_HIGH	3
 
 #define BT_DEFER_SETUP	7
+#define BT_FLUSHABLE	8
 
 #define BT_POWER	9
 struct bt_power {
@@ -238,7 +239,7 @@ out:
 	return NULL;
 }
 
-int bt_err(__u16 code);
+int bt_to_errno(__u16 code);
 
 extern int hci_sock_init(void);
 extern void hci_sock_cleanup(void);
