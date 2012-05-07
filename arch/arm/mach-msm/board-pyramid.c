@@ -1718,9 +1718,19 @@ static uint32_t gsbi4_gpio_table[] = {
 	GPIO_CFG(PYRAMID_CAM_I2C_SCL, 1, GPIO_CFG_OUTPUT, GPIO_CFG_NO_PULL, GPIO_CFG_8MA),
 };
 
+static uint32_t gsbi4_gpio_table_gpio[] = {
+	GPIO_CFG(PYRAMID_CAM_I2C_SDA, 0, GPIO_CFG_INPUT, GPIO_CFG_NO_PULL, GPIO_CFG_8MA),
+	GPIO_CFG(PYRAMID_CAM_I2C_SCL, 0, GPIO_CFG_INPUT, GPIO_CFG_NO_PULL, GPIO_CFG_8MA),
+};
+
 static uint32_t gsbi5_gpio_table[] = {
 	GPIO_CFG(PYRAMID_TP_I2C_SDA, 1, GPIO_CFG_INPUT, GPIO_CFG_NO_PULL, GPIO_CFG_4MA),
 	GPIO_CFG(PYRAMID_TP_I2C_SCL, 1, GPIO_CFG_INPUT, GPIO_CFG_NO_PULL, GPIO_CFG_8MA),
+};
+
+static uint32_t gsbi5_gpio_table_gpio[] = {
+	GPIO_CFG(PYRAMID_TP_I2C_SDA, 0, GPIO_CFG_INPUT, GPIO_CFG_NO_PULL, GPIO_CFG_8MA),
+	GPIO_CFG(PYRAMID_TP_I2C_SCL, 0, GPIO_CFG_INPUT, GPIO_CFG_NO_PULL, GPIO_CFG_8MA),
 };
 
 static uint32_t gsbi7_gpio_table[] = {
@@ -1728,9 +1738,19 @@ static uint32_t gsbi7_gpio_table[] = {
 	GPIO_CFG(PYRAMID_GENERAL_I2C_SCL, 1, GPIO_CFG_INPUT, GPIO_CFG_NO_PULL, GPIO_CFG_8MA),
 };
 
+static uint32_t gsbi7_gpio_table_gpio[] = {
+	GPIO_CFG(PYRAMID_GENERAL_I2C_SDA, 0, GPIO_CFG_INPUT, GPIO_CFG_NO_PULL, GPIO_CFG_8MA),
+	GPIO_CFG(PYRAMID_GENERAL_I2C_SCL, 0, GPIO_CFG_INPUT, GPIO_CFG_NO_PULL, GPIO_CFG_8MA),
+};
+
 static uint32_t gsbi10_gpio_table[] = {
 	GPIO_CFG(PYRAMID_SENSOR_I2C_SDA, 1, GPIO_CFG_INPUT, GPIO_CFG_NO_PULL, GPIO_CFG_4MA),
 	GPIO_CFG(PYRAMID_SENSOR_I2C_SCL, 1, GPIO_CFG_INPUT, GPIO_CFG_NO_PULL, GPIO_CFG_8MA),
+};
+
+static uint32_t gsbi10_gpio_table_gpio[] = {
+	GPIO_CFG(PYRAMID_SENSOR_I2C_SDA, 0, GPIO_CFG_INPUT, GPIO_CFG_NO_PULL, GPIO_CFG_8MA),
+	GPIO_CFG(PYRAMID_SENSOR_I2C_SCL, 0, GPIO_CFG_INPUT, GPIO_CFG_NO_PULL, GPIO_CFG_8MA),
 };
 
 
@@ -1744,8 +1764,8 @@ static void gsbi_qup_i2c_gpio_config(int adap_id, int config_type)
 	}
 
 	if ((adap_id == MSM_GSBI4_QUP_I2C_BUS_ID) && (config_type == 0)) {
-		gpio_tlmm_config(gsbi4_gpio_table[0], GPIO_CFG_DISABLE);
-		gpio_tlmm_config(gsbi4_gpio_table[1], GPIO_CFG_DISABLE);
+		gpio_tlmm_config(gsbi4_gpio_table_gpio[0], GPIO_CFG_ENABLE);
+		gpio_tlmm_config(gsbi4_gpio_table_gpio[1], GPIO_CFG_ENABLE);
 	}
 
 	if ((adap_id == MSM_GSBI5_QUP_I2C_BUS_ID) && (config_type == 1)) {
@@ -1754,8 +1774,8 @@ static void gsbi_qup_i2c_gpio_config(int adap_id, int config_type)
 	}
 
 	if ((adap_id == MSM_GSBI5_QUP_I2C_BUS_ID) && (config_type == 0)) {
-		gpio_tlmm_config(gsbi5_gpio_table[0], GPIO_CFG_DISABLE);
-		gpio_tlmm_config(gsbi5_gpio_table[1], GPIO_CFG_DISABLE);
+		gpio_tlmm_config(gsbi5_gpio_table_gpio[0], GPIO_CFG_ENABLE);
+		gpio_tlmm_config(gsbi5_gpio_table_gpio[1], GPIO_CFG_ENABLE);
 	}
 
 	if ((adap_id == MSM_GSBI7_QUP_I2C_BUS_ID) && (config_type == 1)) {
@@ -1764,8 +1784,8 @@ static void gsbi_qup_i2c_gpio_config(int adap_id, int config_type)
 	}
 
 	if ((adap_id == MSM_GSBI7_QUP_I2C_BUS_ID) && (config_type == 0)) {
-		gpio_tlmm_config(gsbi7_gpio_table[0], GPIO_CFG_DISABLE);
-		gpio_tlmm_config(gsbi7_gpio_table[1], GPIO_CFG_DISABLE);
+		gpio_tlmm_config(gsbi7_gpio_table_gpio[0], GPIO_CFG_ENABLE);
+		gpio_tlmm_config(gsbi7_gpio_table_gpio[1], GPIO_CFG_ENABLE);
 	}
 
 	if ((adap_id == MSM_GSBI10_QUP_I2C_BUS_ID) && (config_type == 1)) {
@@ -1774,8 +1794,8 @@ static void gsbi_qup_i2c_gpio_config(int adap_id, int config_type)
 	}
 
 	if ((adap_id == MSM_GSBI10_QUP_I2C_BUS_ID) && (config_type == 0)) {
-		gpio_tlmm_config(gsbi10_gpio_table[0], GPIO_CFG_DISABLE);
-		gpio_tlmm_config(gsbi10_gpio_table[1], GPIO_CFG_DISABLE);
+		gpio_tlmm_config(gsbi10_gpio_table_gpio[0], GPIO_CFG_ENABLE);
+		gpio_tlmm_config(gsbi10_gpio_table_gpio[1], GPIO_CFG_ENABLE);
 	}
 
 }
