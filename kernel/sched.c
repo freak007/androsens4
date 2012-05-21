@@ -4354,26 +4354,6 @@ asmlinkage void __sched schedule(void)
 	sched_submit_work(tsk);
 	__schedule();
 }
-
-static inline void sched_submit_work(struct task_struct *tsk)
-{
-	if (!tsk->state)
-		return;
-	/*
-	 * If we are going to sleep and we have plugged IO queued,
-	 * make sure to submit it to avoid deadlocks.
-	 */
-	if (blk_needs_flush_plug(tsk))
-		blk_schedule_flush_plug(tsk);
-}
-
-asmlinkage void __sched schedule(void)
-{
-	struct task_struct *tsk = current;
-
-	sched_submit_work(tsk);
-	__schedule();
-}
 EXPORT_SYMBOL(schedule);
 
 #ifdef CONFIG_MUTEX_SPIN_ON_OWNER
@@ -7131,6 +7111,7 @@ build_overlap_sched_groups(struct sched_domain *sd, int cpu)
 
 		sg->sgp = *per_cpu_ptr(sdd->sgp, cpumask_first(sg_span));
 		atomic_inc(&sg->sgp->ref);
+		sg->balance_cpu = -1;
 
 		if (cpumask_test_cpu(cpu, sg_span))
 			groups = sg;
@@ -7206,6 +7187,7 @@ build_sched_groups(struct sched_domain *sd, int cpu)
 
 		cpumask_clear(sched_group_cpus(sg));
 		sg->sgp->power = 0;
+		sg->balance_cpu = -1;
 
 		for_each_cpu(j, span) {
 			if (get_group(j, sdd, NULL) != group)
