@@ -256,22 +256,22 @@ config PERFLOCK_SCREEN_POLICY
 config PERFLOCK_SCREEN_ON_MIN
         depends on PERFLOCK_SCREEN_POLICY
         int "Minimum speed while screen on"
-        default MSM_CPU_FREQ_ONDEMAND_MIN
+        default MSM_CPU_FREQ_MIN
 
 config PERFLOCK_SCREEN_ON_MAX
         depends on PERFLOCK_SCREEN_POLICY
         int "Maximum speed while screen on"
-        default MSM_CPU_FREQ_ONDEMAND_MAX
+        default MSM_CPU_FREQ_MAX
 
 config PERFLOCK_SCREEN_OFF_MIN
         depends on PERFLOCK_SCREEN_POLICY
         int "Minimum speed while screen off"
-        default MSM_CPU_FREQ_ONDEMAND_MIN
+        default MSM_CPU_FREQ_MIN
 
 config PERFLOCK_SCREEN_OFF_MAX
         depends on PERFLOCK_SCREEN_POLICY
         int "Maximum speed while screen off"
-        default MSM_CPU_FREQ_ONDEMAND_MIN
+        default 486000
 
 menu "MSM Board Selection"
 
@@ -1507,51 +1507,6 @@ config CMDLINE_OPTIONS
 	  maxscroff=<VALUEinKHZ> commands from the kernels cmdline.
 	  This also enables a freq. cap while the screen if off.
 
-choice
-	prompt "MSM KGSL 3D overclocking options"
-	default MSM_KGSL_3D_GPUOC_STOCK
-
-config MSM_KGSL_3D_GPUOC_STOCK
-	bool "3D GPU overclocking disabled. 3D@266"
-        help
-          Clocks: 266Mhz max on the 3D core.
-
-config MSM_KGSL_3D_GPUOC_NORM
-	bool "3D GPU norm overclocked: 3D@300"
-        help
-          Clocks: 300Mhz max on the 3D core.
-
-config MSM_KGSL_3D_GPUOC_MAX
-	bool "3D GPU max overclocked: 3D@320"
-        help
-          Clocks: 320Mhz max on the 3D core and pushes the
-          bandwidth of 3D.
-
-endchoice
-
-choice
-        prompt "MSM KGSL 2D overclocking options"
-        default MSM_KGSL_2D_GPUOC_STOCK
-
-config MSM_KGSL_2D_GPUOC_STOCK
-        bool "2D GPU overclocking disabled. 2D@200"
-        help
-          Clocks: 200Mhz max on the 2D core.
-
-config MSM_KGSL_2D_GPUOC_NORM
-        bool "2D GPU norm overclocked: 2D@228"
-        help
-          Clocks: 228Mhz max on the 2D core.
-
-config MSM_KGSL_2D_GPUOC_MAX
-        bool "2D GPU max overclocked: 2D@266"
-        help
-          Clocks: 266Mhz max on the 2D core and pushes the
-          bandwidth of 2D.
-
-endchoice
-
-
 if CPU_FREQ_MSM
 
 config MSM_CPU_FREQ_SET_MIN_MAX
@@ -1572,14 +1527,6 @@ config MSM_CPU_FREQ_MIN
 	default 245760
 
 endif # CPU_FREQ_MSM
-
-config MSM_CPU_FREQ_ONDEMAND_MAX
-        int "Max"
-        default 384000
-
-config MSM_CPU_FREQ_ONDEMAND_MIN
-        int "Min"
-        default 245760
 
 config MSM_CPU_AVS
 	bool "Enable software controlled Adaptive Voltage Scaling (AVS)"

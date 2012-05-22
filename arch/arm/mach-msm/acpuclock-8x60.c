@@ -863,8 +863,17 @@ uint32_t acpu_check_khz_value(unsigned long khz)
 		return CONFIG_MSM_CPU_FREQ_MIN;
 
 	for (f = acpu_freq_tbl_oc; f->acpuclk_khz != 0; f++) {
-		if ((khz < 192000) && (f->acpuclk_khz == (khz*1000))) {
-			return f->acpuclk_khz;
+		if (khz < 192000) {
+			if (f->acpuclk_khz == (khz*1000))
+				return f->acpuclk_khz;
+			if ((khz*1000) > f->acpuclk_khz) {
+				f++;
+				if ((khz*1000) < f->acpuclk_khz) {
+					f--;
+					return f->acpuclk_khz;
+				}
+				f--;
+			}
 		}
 		if (f->acpuclk_khz == khz) {
 			return 1;
@@ -951,7 +960,7 @@ static int __init acpuclk_8x60_init(struct acpuclk_soc_data *soc_data)
 
 	/* Improve boot time by ramping up CPUs immediately. */
 #ifdef CONFIG_CMDLINE_OPTIONS
-	if (cmdline_maxkhz) {
+	if ((cmdline_maxkhz) && (cmdline_minkhz)) {
 		for_each_online_cpu(cpu)
 			acpuclk_8x60_set_rate(cpu, cmdline_maxkhz, SETRATE_INIT);
 	} else {

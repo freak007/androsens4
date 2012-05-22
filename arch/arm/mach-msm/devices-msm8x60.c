@@ -114,6 +114,127 @@ struct platform_device msm_camera_sensor_webcam;
 #define GSBI12_DEV (&msm_gsbi12_qup_i2c_device.dev)
 #endif
 
+unsigned int cmdline_2dgpu = CMDLINE_2DGPU_DEFKHZ;
+unsigned int cmdline_3dgpu[2] = {CMDLINE_3DGPU_DEFKHZ_0, CMDLINE_3DGPU_DEFKHZ_1};
+
+static int __init devices_read_2dgpu_cmdline(char *khz)
+{
+	unsigned long ui_khz;
+	unsigned long *f;
+	unsigned long valid_freq[4] = {200000000, 228571000, 266667000, 0};
+	int err;
+
+	err = strict_strtoul(khz, 0, &ui_khz);
+	if (err) {
+		cmdline_2dgpu = CMDLINE_2DGPU_DEFKHZ;
+		printk(KERN_INFO "[cmdline_2dgpu]: ERROR while converting! using default value!");
+		printk(KERN_INFO "[cmdline_2dgpu]: 2dgpukhz='%i'\n", cmdline_2dgpu);
+		return 1;
+	}
+
+	/* Check if parsed value is valid */
+	if (ui_khz > 320000000)
+		cmdline_2dgpu = CMDLINE_2DGPU_DEFKHZ;
+
+	if (ui_khz < 266667000)
+		cmdline_2dgpu = CMDLINE_2DGPU_DEFKHZ;
+
+	for (f = valid_freq; f != 0; f++) {
+		if (*f == ui_khz) {
+			cmdline_2dgpu = ui_khz;
+			printk(KERN_INFO "[cmdline_2dgpu]: 2dgpukhz='%u'\n", cmdline_2dgpu);
+			return 1;
+		}
+		if (ui_khz > *f) {
+			f++;
+			if (ui_khz < *f) {
+				f--;
+				cmdline_2dgpu = *f;
+				printk(KERN_INFO "[cmdline_2dgpu]: AUTOCORRECT! Couldn't find entered value");
+				printk(KERN_INFO "[cmdline_2dgpu]: 2dgpukhz='%u'\n", cmdline_2dgpu);
+				return 1;
+			}
+			f--;
+		}
+	}
+	/* if we are still in here then something went wrong. Use defaults */
+	cmdline_2dgpu = CMDLINE_2DGPU_DEFKHZ;
+	printk(KERN_INFO "[cmdline_2dgpu]: ERROR! using default value!");
+	printk(KERN_INFO "[cmdline_2dgpu]: 2dgpukhz='%u'\n", cmdline_2dgpu);
+        return 1;
+}
+__setup("2dgpu=", devices_read_2dgpu_cmdline);
+
+static int __init devices_read_3dgpu_cmdline(char *khz)
+{
+	unsigned long ui_khz;
+	unsigned long *f;
+	unsigned long valid_freq[4] = {266667000, 300000000, 320000000, 0};
+	int err;
+
+	err = strict_strtoul(khz, 0, &ui_khz);
+	if (err) {
+		cmdline_3dgpu[1] = CMDLINE_3DGPU_DEFKHZ_1;
+		cmdline_3dgpu[0] = CMDLINE_3DGPU_DEFKHZ_0;
+		printk(KERN_INFO "[cmdline_3dgpu]: ERROR while converting! using default value!");
+		printk(KERN_INFO "[cmdline_3dgpu]: 3dgpukhz_0='%i' & 3dgpukhz_1='%i'\n",
+		       cmdline_3dgpu[0], cmdline_3dgpu[1]);
+		return 1;
+	}
+
+	/* Check if parsed value is valid */
+	if (ui_khz > 320000000)
+		cmdline_3dgpu[1] = CMDLINE_3DGPU_DEFKHZ_1;
+		cmdline_3dgpu[0] = CMDLINE_3DGPU_DEFKHZ_0;
+
+	if (ui_khz < 266667000)
+		cmdline_3dgpu[1] = CMDLINE_3DGPU_DEFKHZ_1;
+		cmdline_3dgpu[0] = CMDLINE_3DGPU_DEFKHZ_0;
+
+	for (f = valid_freq; f != 0; f++) {
+		if (*f == ui_khz) {
+			cmdline_3dgpu[0] = ui_khz;
+			if (*f == valid_freq[0]) {
+				cmdline_3dgpu[1] = CMDLINE_3DGPU_DEFKHZ_1;
+			} else {
+				f--;
+				cmdline_3dgpu[1] = *f;
+				f++;
+			}
+			printk(KERN_INFO "[cmdline_3dgpu]: 3dgpukhz_0='%i' & 3dgpukhz_1='%i'\n",
+			       cmdline_3dgpu[0], cmdline_3dgpu[1]);
+			return 1;
+		}
+		if (ui_khz > *f) {
+			f++;
+			if (ui_khz < *f) {
+				f--;
+				cmdline_3dgpu[0] = *f;
+				if (*f == valid_freq[0]) {
+					cmdline_3dgpu[1] = CMDLINE_3DGPU_DEFKHZ_1;
+				} else {
+					f--;
+					cmdline_3dgpu[1] = *f;
+					f++;
+				}
+				printk(KERN_INFO "[cmdline_3dgpu]: AUTOCORRECT! Couldn't find entered value");
+				printk(KERN_INFO "[cmdline_3dgpu]: 3dgpukhz_0='%i' & 3dgpukhz_1='%i'\n",
+				       cmdline_3dgpu[0], cmdline_3dgpu[1]);
+				return 1;
+			}
+			f--;
+		}
+	}
+	/* if we are still in here then something went wrong. Use defaults */
+	cmdline_3dgpu[1] = CMDLINE_3DGPU_DEFKHZ_1;
+	cmdline_3dgpu[0] = CMDLINE_3DGPU_DEFKHZ_0;
+	printk(KERN_INFO "[cmdline_3dgpu]: ERROR! using default value!");
+	printk(KERN_INFO "[cmdline_3dgpu]: 3dgpukhz_0='%i' & 3dgpukhz_1='%i'\n",
+	       cmdline_3dgpu[0], cmdline_3dgpu[1]);
+        return 1;
+}
+__setup("3dgpu=", devices_read_3dgpu_cmdline);
+
 struct _irq_state *irq_count_info_ptr;
 struct _handle_irq *handle_irq;
 
@@ -764,11 +885,7 @@ static struct msm_bus_vectors grp3d_nominal_high_vectors[] = {
 		.src = MSM_BUS_MASTER_GRAPHICS_3D,
 		.dst = MSM_BUS_SLAVE_EBI_CH0,
 		.ab = 0,
-#ifdef CONFIG_MSM_KGSL_3D_GPUOC_MAX
 		.ib = KGSL_CONVERT_TO_MBPS(2484),
-#else
-		.ib = KGSL_CONVERT_TO_MBPS(2008),
-#endif
 	},
 };
 
@@ -777,11 +894,7 @@ static struct msm_bus_vectors grp3d_max_vectors[] = {
 		.src = MSM_BUS_MASTER_GRAPHICS_3D,
 		.dst = MSM_BUS_SLAVE_EBI_CH0,
 		.ab = 0,
-#ifdef CONFIG_MSM_KGSL_3D_GPUOC_MAX
 		.ib = KGSL_CONVERT_TO_MBPS(2976),
-#else
-		.ib = KGSL_CONVERT_TO_MBPS(2484),
-#endif
 	},
 };
 
@@ -828,11 +941,7 @@ static struct msm_bus_vectors grp2d0_nominal_vectors[] = {
 		.src = MSM_BUS_MASTER_GRAPHICS_2D_CORE0,
 		.dst = MSM_BUS_SLAVE_EBI_CH0,
 		.ab = 0,
-#ifdef CONFIG_MSM_KGSL_2D_GPUOC_MAX
 		.ib = KGSL_CONVERT_TO_MBPS(1300),
-#else
-		.ib = KGSL_CONVERT_TO_MBPS(990),
-#endif
 	},
 };
 
@@ -880,11 +989,7 @@ static struct msm_bus_vectors grp2d1_nominal_vectors[] = {
 		.src = MSM_BUS_MASTER_GRAPHICS_2D_CORE1,
 		.dst = MSM_BUS_SLAVE_EBI_CH0,
 		.ab = 0,
-#ifdef CONFIG_MSM_KGSL_2D_GPUOC_MAX
 		.ib = KGSL_CONVERT_TO_MBPS(1300),
-#else
-		.ib = KGSL_CONVERT_TO_MBPS(990),
-#endif
 	},
 };
 
@@ -951,31 +1056,6 @@ static struct resource kgsl_3d0_resources[] = {
 
 static struct kgsl_device_platform_data kgsl_3d0_pdata = {
 	.pwrlevel = {
-#ifdef CONFIG_MSM_KGSL_3D_GPUOC_MAX
-		{
-			.gpu_freq = 320000000,
-			.bus_freq = 4,
-			.io_fraction = 0,
-		},
-		{
-			.gpu_freq = 266667000,
-			.bus_freq = 3,
-			.io_fraction = 50,
-		},
-#endif
-#ifdef CONFIG_MSM_KGSL_3D_GPUOC_NORM
-		{
-			.gpu_freq = 300000000,
-			.bus_freq = 4,
-			.io_fraction = 0,
-		},
-		{
-			.gpu_freq = 266667000,
-			.bus_freq = 3,
-			.io_fraction = 50,
-		},
-#endif
-#ifdef CONFIG_MSM_KGSL_3D_GPUOC_STOCK
 		{
 			.gpu_freq = 266667000,
 			.bus_freq = 4,
@@ -986,7 +1066,6 @@ static struct kgsl_device_platform_data kgsl_3d0_pdata = {
 			.bus_freq = 3,
 			.io_fraction = 50,
 		},
-#endif
 		{
 			.gpu_freq = 200000000,
 			.bus_freq = 2,
@@ -1041,15 +1120,7 @@ static struct resource kgsl_2d0_resources[] = {
 static struct kgsl_device_platform_data kgsl_2d0_pdata = {
 	.pwrlevel = {
 		{
-#ifdef CONFIG_MSM_KGSL_2D_GPUOC_MAX
-			.gpu_freq = 266667000,
-#endif
-#ifdef CONFIG_MSM_KGSL_2D_GPUOC_NORM
-			.gpu_freq = 228571000,
-#endif
-#ifdef CONFIG_MSM_KGSL_2D_GPUOC_STOCK
 			.gpu_freq = 200000000,
-#endif
 			.bus_freq = 2,
 		},
 		{
@@ -1100,15 +1171,7 @@ static struct resource kgsl_2d1_resources[] = {
 static struct kgsl_device_platform_data kgsl_2d1_pdata = {
 	.pwrlevel = {
 		{
-#ifdef CONFIG_MSM_KGSL_2D_GPUOC_MAX
-			.gpu_freq = 266667000,
-#endif
-#ifdef CONFIG_MSM_KGSL_2D_GPUOC_NORM
-			.gpu_freq = 228571000,
-#endif
-#ifdef CONFIG_MSM_KGSL_2D_GPUOC_STOCK
 			.gpu_freq = 200000000,
-#endif
 			.bus_freq = 2,
 		},
 		{
@@ -1140,6 +1203,23 @@ struct platform_device msm_kgsl_2d1 = {
 		.platform_data = &kgsl_2d1_pdata,
 	},
 };
+
+int set_kgsl_3d0_freq(unsigned int freq0, unsigned int freq1)
+{
+	kgsl_3d0_pdata.pwrlevel[0].gpu_freq = freq0;
+	kgsl_3d0_pdata.pwrlevel[1].gpu_freq = freq1;
+	return 0;
+}
+int set_kgsl_2d0_freq(unsigned int freq)
+{
+	kgsl_2d0_pdata.pwrlevel[0].gpu_freq = freq;
+	return 0;
+}
+int set_kgsl_2d1_freq(unsigned int freq)
+{
+	kgsl_2d1_pdata.pwrlevel[0].gpu_freq = freq;
+	return 0;
+}
 
 /*
  * this a software workaround for not having two distinct board
