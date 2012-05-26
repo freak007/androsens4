@@ -343,7 +343,7 @@ struct semaphore dhd_registration_sem;
 #endif /* (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 27)) */
 /* load firmware and/or nvram values from the filesystem */
 
-#ifdef BCM4329_248_USERLAND
+#ifdef CONFIG_BCM4329_248_USERLAND 
 	module_param_string(firmware_path, firmware_path, MOD_PARAM_PATHLEN, 0660);
 #else 
 	module_param_string(firmware_path, firmware_path, MOD_PARAM_PATHLEN, 0);
@@ -1952,7 +1952,7 @@ dhd_open(struct net_device *net)
 	int ifidx;
 	int32 ret = 0;
 
-#ifdef BCM4329_248_USERLAND
+#ifdef CONFIG_BCM4329_248_USERLAND
 	//dhd_os_wake_lock(&dhd->pub);
 	/* Update FW path if it was changed */
 	if ((firmware_path != NULL) && (firmware_path[0] != '\0')) {
@@ -1984,7 +1984,7 @@ dhd_open(struct net_device *net)
 
 	if ((dhd->iflist[ifidx]) && (dhd->iflist[ifidx]->state == WLC_E_IF_DEL)) {
 		DHD_ERROR(("%s: Error: called when IF already deleted\n", __FUNCTION__));
-#ifdef BCM4329_248_USERLAND
+#ifdef CONFIG_BCM4329_248_USERLAND
 		ret = -1;
 		goto exit;
 #else
@@ -2012,7 +2012,7 @@ dhd_open(struct net_device *net)
 
 
 	OLD_MOD_INC_USE_COUNT;
-#ifdef BCM4329_248_USERLAND
+#ifdef CONFIG_BCM4329_248_USERLAND
 exit:
 	//dhd_os_wake_unlock(&dhd->pub);
 #endif

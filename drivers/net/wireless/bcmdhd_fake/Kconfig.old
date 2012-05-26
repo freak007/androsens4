@@ -1,0 +1,33 @@
+config BCMDHD_FAKE
+        tristate "Broadcom Fake bcmdhd wireless cards support"
+        depends on MMC
+        select WIRELESS_EXT
+        select WEXT_PRIV
+        ---help---
+          This module adds support for wireless adapters based on
+          Broadcom 4329 chipset.
+
+          This driver uses the kernel's wireless extensions subsystem.
+
+          If you choose to build a module, it'll be called dhd. Say M if
+          unsure.
+
+config BCMDHD_USERLAND
+	bool "firmware_path to userland"
+	depends on BCMDHD_FAKE
+        ---help---
+	  expose firmware_path to userland for bcmdhd_fake driver
+
+config BCMDHD_FW_PATH
+	depends on BCMDHD_FAKE
+	string "Firmware path"
+	default "/system/etc/firmware/fw_bcm4329_b2.bin"
+	---help---
+	  Path to the firmware file.
+
+config BCMDHD_NVRAM_PATH
+	depends on BCMDHD_FAKE
+	string "NVRAM path"
+	default "/proc/calibration"
+	---help---
+	  Path to the calibration file.
