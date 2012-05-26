@@ -85,7 +85,6 @@ static struct input_dev * sweep2wake_pwrdev;
 static struct led_classdev * sweep2wake_leddev;
 static DEFINE_MUTEX(pwrlock);
 
-#ifdef CONFIG_CMDLINE_OPTIONS
 static int __init cy8c_read_s2w_cmdline(char *s2w)
 {
 	if (strcmp(s2w, "2") == 0) {
@@ -104,7 +103,6 @@ static int __init cy8c_read_s2w_cmdline(char *s2w)
 	return 1;
 }
 __setup("s2w=", cy8c_read_s2w_cmdline);
-#endif
 
 extern void sweep2wake_setdev(struct input_dev * input_device) {
 	sweep2wake_pwrdev = input_device;
