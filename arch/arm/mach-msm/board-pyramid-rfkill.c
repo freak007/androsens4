@@ -30,7 +30,7 @@
 */
 
 static struct rfkill *bt_rfk;
-static const char bt_name[] = "bcm4329";
+static const char bt_name[] = "bcmdhd";
 
 /* bt on configuration */
 static uint32_t pyramid_bt_on_table[] = {

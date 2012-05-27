@@ -1,4 +1,4 @@
-config BCM4329_248_FAKE
+config BCMDHD_FAKE
         tristate "Broadcom fake wireless cards support"
         depends on MMC
         select WIRELESS_EXT
@@ -14,19 +14,19 @@ config BCM4329_248_FAKE
 
 config BCM4329_248_USERLAND
 	bool "bcm4329_248 userland"
-	depends on BCM4329_248_FAKE
+	depends on BCMDHD_FAKE
         ---help---
 	  expose firmware_path to userland
 
 config BCM4329_FW_PATH
-	depends on BCM4329_248_FAKE
+	depends on BCMDHD_FAKE
 	string "Firmware path"
 	default "/system/etc/firmware/fw_bcm4329.bin"
 	---help---
 	  Path to the firmware file.
 
 config BCM4329_NVRAM_PATH
-	depends on BCM4329_248_FAKE
+	depends on BCMDHD_FAKE
 	string "NVRAM path"
 	default "/proc/calibration"
 	---help---

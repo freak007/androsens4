@@ -166,7 +166,8 @@ static int wifi_probe(struct platform_device *pdev)
 		(struct wifi_platform_data *)(pdev->dev.platform_data);
 
 	printf("## %s\n", __FUNCTION__);
-	wifi_irqres = platform_get_resource_byname(pdev, IORESOURCE_IRQ, "bcm4329_wlan_irq");
+	//wifi_irqres = platform_get_resource_byname(pdev, IORESOURCE_IRQ, "bcm4329_wlan_irq");
+	wifi_irqres = platform_get_resource_byname(pdev, IORESOURCE_IRQ, "bcmdhd_wlan_irq");
 	wifi_control_data = wifi_ctrl;
 
 	wifi_set_power(1, 0);	/* Power On */
@@ -207,7 +208,8 @@ static struct platform_driver wifi_device = {
 	.suspend        = wifi_suspend,
 	.resume         = wifi_resume,
 	.driver         = {
-	.name   = "bcm4329_wlan",
+	//.name   = "bcm4329_wlan",
+	.name   = "bcmdhd_wlan",
 	}
 };
 

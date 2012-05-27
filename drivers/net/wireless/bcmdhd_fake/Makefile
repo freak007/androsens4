@@ -8,7 +8,7 @@ DHDCFLAGS = -DLINUX -DBCMDRIVER -DBCMDONGLEHOST -DDHDTHREAD -DBCMWPA2         \
 	-DEMBEDDED_PLATFORM -DARP_OFFLOAD_SUPPORT -DPKT_FILTER_SUPPORT        \
 	-DKEEP_ALIVE -DCONFIG_FIRST_SCAN -DAP_ONLY \
 	-DCSCAN -DBCM4329_LOW_POWER -DPNO_SUPPORT -DHTC_KlocWork\
-	-Idrivers/net/wireless/bcm4329_248 -Idrivers/net/wireless/bcm4329_248/include
+	-Idrivers/net/wireless/bcmdhd_fake -Idrivers/net/wireless/bcmdhd_fake/include
 	#-DPNO_SUPPORT -DCSCAN -DSET_RANDOM_MAC_SOFTAP -DGET_CUSTOM_MAC_ENABLE 
 
 DHDOFILES = dhd_linux.o linux_osl.o bcmutils.o dhd_common.o dhd_custom_gpio.o \
@@ -16,7 +16,7 @@ DHDOFILES = dhd_linux.o linux_osl.o bcmutils.o dhd_common.o dhd_custom_gpio.o \
 	dhd_linux_sched.o dhd_cdc.o bcmsdh_sdmmc.o bcmsdh.o bcmsdh_linux.o    \
 	bcmsdh_sdmmc_linux.o
 
-obj-$(CONFIG_BCM4329_248_FAKE) += bcmdhd.o
+obj-$(CONFIG_BCMDHD_FAKE) += bcmdhd.o
 bcmdhd-objs += $(DHDOFILES)
 EXTRA_CFLAGS = $(DHDCFLAGS)
 EXTRA_LDFLAGS += --strip-debug
