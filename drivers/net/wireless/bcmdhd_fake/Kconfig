@@ -12,20 +12,20 @@ config BCMDHD_FAKE
           If you choose to build a module, it'll be called dhd. Say M if
           unsure.
 
-config BCM4329_248_USERLAND
-	bool "bcm4329_248 userland"
+config BCMDHD_FAKE_USERLAND
+	bool "bcmdhd fake userland"
 	depends on BCMDHD_FAKE
         ---help---
 	  expose firmware_path to userland
 
-config BCM4329_FW_PATH
+config BCMDHD_FAKE_FW_PATH
 	depends on BCMDHD_FAKE
 	string "Firmware path"
-	default "/system/etc/firmware/fw_bcm4329.bin"
+	default "/system/etc/firmware/fw_bcm4329_b2.bin"
 	---help---
 	  Path to the firmware file.
 
-config BCM4329_NVRAM_PATH
+config BCMDHD_FAKE_NVRAM_PATH
 	depends on BCMDHD_FAKE
 	string "NVRAM path"
 	default "/proc/calibration"
