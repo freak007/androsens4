@@ -44,6 +44,7 @@
 #include <linux/fcntl.h>
 #include <linux/fs.h>
 #include <linux/ioprio.h>
+#include <net/bcmdhd.h>
 
 #ifdef CONFIG_PERFLOCK
 #include <mach/perflock.h>
@@ -329,6 +330,7 @@ typedef struct dhd_info {
  * example nvram_path[MOD_PARAM_PATHLEN]="/projects/wlan/nvram.txt"
  */
 char firmware_path[MOD_PARAM_PATHLEN];
+//char firmware_path2[MOD_PARAM_PATHLEN];
 char nvram_path[MOD_PARAM_PATHLEN];
 
 
@@ -343,11 +345,11 @@ struct semaphore dhd_registration_sem;
 #endif /* (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 27)) */
 /* load firmware and/or nvram values from the filesystem */
 
-#ifdef BCM4329_248_USERLAND
-	module_param_string(firmware_path, firmware_path, MOD_PARAM_PATHLEN, 0660);
-#else 
+//#ifdef CONFIG_BCM4329_248_USERLAND
+//	module_param_string(firmware_path, firmware_path, MOD_PARAM_PATHLEN, 0664);
+//#else 
 	module_param_string(firmware_path, firmware_path, MOD_PARAM_PATHLEN, 0);
-#endif
+//#endif
 
 module_param_string(nvram_path, nvram_path, MOD_PARAM_PATHLEN, 0);
 
@@ -1075,8 +1077,8 @@ dhd_set_multicast_list(struct net_device *dev)
 	}
 
 	ifidx = dhd_net2idx(dhd, dev);
-	if (ifidx == DHD_BAD_IF)
-		return;
+	//if (ifidx == DHD_BAD_IF)
+	//	return;
 
 	ASSERT(dhd->sysioc_pid >= 0);
 	dhd->set_multicast = TRUE;
@@ -1952,16 +1954,26 @@ dhd_open(struct net_device *net)
 	int ifidx;
 	int32 ret = 0;
 
-#ifdef BCM4329_248_USERLAND
+//#ifdef CONFIG_BCM4329_248_USERLAND
 	//dhd_os_wake_lock(&dhd->pub);
 	/* Update FW path if it was changed */
+	printf("[FREAK007] Current firmwares status stage 1: fw_path: %s , firmware_path: %s", fw_path, firmware_path);
+	
+	if (get_fake_firmware(1)) {
+		strcpy(firmware_path,"/system/etc/firmware/fw_bcm4329_apsta.bin");
+	} else {
+		strcpy(firmware_path,"/system/etc/firmware/fw_bcm4329.bin");
+	};
+	printf("[FREAK007] Current firmwares status stage 2: fw_path: %s , firmware_path: %s", fw_path, firmware_path);
+	
 	if ((firmware_path != NULL) && (firmware_path[0] != '\0')) {
 		if (firmware_path[strlen(firmware_path)-1] == '\n')
 			firmware_path[strlen(firmware_path)-1] = '\0';
 		strcpy(fw_path, firmware_path);
-		firmware_path[0] = '\0';
+		//firmware_path[0] = '\0';
 	}
-#endif
+//#endif
+	printf("[FREAK007] Current firmwares status stage 3: fw_path: %s , firmware_path: %s", fw_path, firmware_path);
 	
 	if (module_remove) {
 		printf("%s: module removed. Just return.\n", __FUNCTION__);
@@ -1984,7 +1996,7 @@ dhd_open(struct net_device *net)
 
 	if ((dhd->iflist[ifidx]) && (dhd->iflist[ifidx]->state == WLC_E_IF_DEL)) {
 		DHD_ERROR(("%s: Error: called when IF already deleted\n", __FUNCTION__));
-#ifdef BCM4329_248_USERLAND
+#ifdef CONFIG_BCM4329_248_USERLAND
 		ret = -1;
 		goto exit;
 #else
@@ -2012,7 +2024,7 @@ dhd_open(struct net_device *net)
 
 
 	OLD_MOD_INC_USE_COUNT;
-#ifdef BCM4329_248_USERLAND
+#ifdef CONFIG_BCM4329_248_USERLAND
 exit:
 	//dhd_os_wake_unlock(&dhd->pub);
 #endif
@@ -2115,10 +2127,12 @@ dhd_attach(osl_t *osh, struct dhd_bus *bus, uint bus_hdrlen)
 		strcpy(nvram_path, "/system/etc/calibration.xc");
 	}
 #endif
+	printf("[FREAK007] Current firmwares status stage 4: fw_path: %s , firmware_path: %s", fw_path, firmware_path);
 	if ((firmware_path != NULL) && (firmware_path[0] != '\0'))
 		strcpy(fw_path, firmware_path);
 	if ((nvram_path != NULL) && (nvram_path[0] != '\0'))
 		strcpy(nv_path, nvram_path);
+	printf("[FREAK007] Current firmwares status stage 5: fw_path: %s , firmware_path: %s", fw_path, firmware_path);
 
 	/* Allocate etherdev, including space for private structure */
 	if (!(net = alloc_etherdev(sizeof(dhd)))) {

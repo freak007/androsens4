@@ -8092,7 +8092,7 @@ static int iwpriv_fw_reload(struct net_device *dev,
 exit_proc:
 	return ret;
 }
-//#ifdef SOFTAP
+#ifdef SOFTAP
 
 static int
 iwpriv_settxpower(struct net_device *dev,
@@ -8184,7 +8184,7 @@ static int iwpriv_wpasupp_loop_tst(struct net_device *dev,
 
 	return res;
 }
-//#endif 
+#endif 
 
 
 static int

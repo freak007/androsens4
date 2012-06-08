@@ -1,0 +1,4 @@
+config FAKE
+	tristate "Fake bcmdhd"
+	---help---
+	  Try to only generate /sys/module/bcmdhd structure

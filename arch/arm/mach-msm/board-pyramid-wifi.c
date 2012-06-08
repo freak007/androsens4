@@ -77,7 +77,7 @@ int __init pyramid_init_wifi_mem(void)
 
 static struct resource pyramid_wifi_resources[] = {
 	[0] = {
-		.name		= "bcmdhd_wlan_irq",
+		.name		= "bcm4329_wlan_irq",
 		.start		= MSM_GPIO_TO_INT(PYRAMID_GPIO_WIFI_IRQ),
 		.end		= MSM_GPIO_TO_INT(PYRAMID_GPIO_WIFI_IRQ),
 #ifdef HW_OOB
@@ -98,12 +98,12 @@ static struct wifi_platform_data pyramid_wifi_control = {
 };
 
 static struct platform_device pyramid_wifi_device = {
-	.name           = "bcmdhd_wlan",
+	.name           = "bcm4329_wlan",
 	.id             = 1,
 	.num_resources  = ARRAY_SIZE(pyramid_wifi_resources),
 	.resource       = pyramid_wifi_resources,
 	.dev            = {
-		.platform_data = &pyramid_wifi_control,
+	.platform_data 	= &pyramid_wifi_control,
 	},
 };
 

@@ -166,7 +166,6 @@ static int wifi_probe(struct platform_device *pdev)
 		(struct wifi_platform_data *)(pdev->dev.platform_data);
 
 	printf("## %s\n", __FUNCTION__);
-	//wifi_irqres = platform_get_resource_byname(pdev, IORESOURCE_IRQ, "bcm4329_wlan_irq");
 	wifi_irqres = platform_get_resource_byname(pdev, IORESOURCE_IRQ, "bcmdhd_wlan_irq");
 	wifi_control_data = wifi_ctrl;
 
@@ -208,7 +207,6 @@ static struct platform_driver wifi_device = {
 	.suspend        = wifi_suspend,
 	.resume         = wifi_resume,
 	.driver         = {
-	//.name   = "bcm4329_wlan",
 	.name   = "bcmdhd_wlan",
 	}
 };
@@ -346,7 +344,8 @@ struct semaphore dhd_registration_sem;
 /* load firmware and/or nvram values from the filesystem */
 
 #ifdef CONFIG_BCMDHD_FAKE_USERLAND 
-	module_param_string(firmware_path, firmware_path, MOD_PARAM_PATHLEN, 0660);
+	module_param_string(firmware_path, firmware_path, MOD_PARAM_PATHLEN, 0664);
+	//module_param_string(firmware_path, firmware_path, MOD_PARAM_PATHLEN, 0);
 #else 
 	module_param_string(firmware_path, firmware_path, MOD_PARAM_PATHLEN, 0);
 #endif
@@ -488,7 +487,7 @@ module_param(dhd_pktgen_len, uint, 0);
 #endif
 
 static char dhd_version[] = "Dongle Host Driver, version " EPI_VERSION_STR
-#ifdef DHD_DEBUG
+#ifdef DHD_DEEBUG
 "\nCompiled in " SRCBASE " on " __DATE__ " at " __TIME__
 #endif
 ;
@@ -1955,18 +1954,38 @@ dhd_open(struct net_device *net)
 	int32 ret = 0;
 
 #ifdef CONFIG_BCMDHD_FAKE_USERLAND
-	//dhd_os_wake_lock(&dhd->pub);
+	/*
+	unsigned long flags;
+	flags = dhd_os_spin_lock(&dhd->pub);
+	*/
 	/* Update FW path if it was changed */
+	
+	printf("[FREAK007] Current firmwares status stage 1: fw_path: %s , firmware_path: %s", fw_path, firmware_path);
+        if (strstr(firmware_path, "apsta")) {
+                        strcpy(firmware_path, "/system/etc/firmware/fw_bcm4329_apsta.bin");
+                }
+                else {
+                        strcpy(firmware_path, "/system/etc/firmware/fw_bcm4329.bin");
+                }
+	printf("[FREAK007] Current firmwares status stage 2: fw_path: %s , firmware_path: %s", fw_path, firmware_path);
+	strcpy(fw_path, firmware_path);
+	//firmware_path[0] = '\0';
+	//printf("[FREAK007] Current firmwares status stage 3: fw_path: %s , firmware_path: %s", fw_path, firmware_path);	
+	/*
 	if ((firmware_path != NULL) && (firmware_path[0] != '\0')) {
 		if (firmware_path[strlen(firmware_path)-1] == '\n')
 			firmware_path[strlen(firmware_path)-1] = '\0';
-		strcpy(fw_path, firmware_path);
+		printf("[FREAK007] Current firmwares status stage 2: fw_path: %s , firmware_path: %s", fw_path, firmware_path);	
+		strcpy(firmware_path2,firmware_path);
+		strcpy(fw_path, firmware_path2);
 		firmware_path[0] = '\0';
+		printf("[FREAK007] Current firmwares status stage 3: fw_path: %s , firmware_path: %s", fw_path, firmware_path);	
 	}
+	*/
 #endif
 	
 	if (module_remove) {
-		printf("%s: module removed. Just return.\n", __FUNCTION__);
+		printf("[FREAK007] %s: module removed. Just return.\n", __FUNCTION__);
 		return -1;
 	}
 
@@ -2016,6 +2035,7 @@ dhd_open(struct net_device *net)
 	OLD_MOD_INC_USE_COUNT;
 #ifdef CONFIG_BCMDHD_FAKE_USERLAND
 exit:
+	//dhd_os_spin_lock(&dhd->pub, flags);
 	//dhd_os_wake_unlock(&dhd->pub);
 #endif
 	return ret;
@@ -2117,10 +2137,12 @@ dhd_attach(osl_t *osh, struct dhd_bus *bus, uint bus_hdrlen)
 		strcpy(nvram_path, "/system/etc/calibration.xc");
 	}
 #endif
+	printf("[FREAK007] Current firmwares status stage 4: fw_path: %s , firmware_path: %s, firmware_path[0]: %d", fw_path, firmware_path, firmware_path[0]);
 	if ((firmware_path != NULL) && (firmware_path[0] != '\0'))
 		strcpy(fw_path, firmware_path);
 	if ((nvram_path != NULL) && (nvram_path[0] != '\0'))
 		strcpy(nv_path, nvram_path);
+	printf("[FREAK007] Current firmwares status stage 5: fw_path: %s , firmware_path: %s", fw_path, firmware_path);
 
 	/* Allocate etherdev, including space for private structure */
 	if (!(net = alloc_etherdev(sizeof(dhd)))) {

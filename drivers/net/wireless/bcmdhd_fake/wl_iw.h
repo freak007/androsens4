@@ -62,6 +62,7 @@ typedef struct wl_iw_extra_params {
 } wl_iw_extra_params_t;
 
 #define SOFTAP 1
+#define DHD_DEBUG 1
 
 
 #define	WL_IW_RSSI_MINVAL		-200
