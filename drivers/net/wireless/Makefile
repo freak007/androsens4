@@ -62,7 +62,7 @@ obj-$(CONFIG_IWM)	+= iwmc3200wifi/
 obj-$(CONFIG_MWIFIEX)	+= mwifiex/
 
 #obj-$(CONFIG_BCM4329)	+= bcm4329/
-obj-$(CONFIG_BCMDHD)	+= bcmdhd/
+#obj-$(CONFIG_BCMDHD)	+= bcmdhd/
 obj-$(CONFIG_FAKE)	+= fake/
 obj-$(CONFIG_BCMDHD_FAKE)	+= bcmdhd_fake/
 
@@ -74,5 +74,5 @@ obj-$(CONFIG_WCNSS_CORE)	+= wcnss/
 obj-$(CONFIG_BCM4329_248)	+= bcm4329_248/
 #obj-$(CONFIG_BCM4330B2)   += bcm4330b2/
 
-obj-$(CONFIG_BRCMFMAC)  += brcm80211/
-obj-$(CONFIG_BRCMSMAC)  += brcm80211/
+#obj-$(CONFIG_BRCMFMAC)  += brcm80211/
+#obj-$(CONFIG_BRCMSMAC)  += brcm80211/
